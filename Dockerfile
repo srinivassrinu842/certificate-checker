@@ -1,23 +1,15 @@
-# Use an official Python runtime as a parent image
-FROM python:3.8-alpine
+# Use a minimal Alpine Linux image
+FROM alpine:latest
 
-# Set the working directory to /app
-WORKDIR /app
+# Install necessary packages
+RUN apk --no-cache add openssl python3 py3-pip curl
 
-# Install additional dependencies
-RUN apk --no-cache add libressl-dev musl-dev gcc
+# Install prometheus-client
+RUN pip3 install prometheus_client cryptography
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+# Copy the script to check certificate expiry
+COPY certificate_checker.py /
 
-# Install any needed packages specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Make port 8080 available to the world outside this container
-EXPOSE 8080
-
-# Define environment variable
-ENV TARGETS="https://example.com:443,http://insecure.example.com:8080"
-
-# Run certificate_checker.py when the container launches
-CMD ["python", "certificate_checker.py"]
+# Set the script as the entry point
+#CMD ["/bin/sh", "-c", "crond -f -l 0 && /certificate_checker.py"]
+CMD ["python3", "/certificate_checker.py"]
