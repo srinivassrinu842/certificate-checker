@@ -11,5 +11,4 @@ RUN pip3 install prometheus_client cryptography
 COPY certificate_checker.py /
 
 # Set the script as the entry point
-#CMD ["/bin/sh", "-c", "crond -f -l 0 && /certificate_checker.py"]
-CMD ["python3", "/certificate_checker.py"]
+ENTRYPOINT ["python3", "/certificate_checker.py"]
